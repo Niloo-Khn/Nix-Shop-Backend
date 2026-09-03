@@ -15,8 +15,8 @@ test("passwords are salted and verifiable", async () => {
 
 test("product service only returns active products", async () => {
   const repository = new InMemoryRepository<Product>([
-    { id: "active", name: "Active", category: "Cats", price: 10, description: "Active", icon: "🐈", color: "#fff", active: true },
-    { id: "hidden", name: "Hidden", category: "Cats", price: 10, description: "Hidden", icon: "🐈", color: "#fff", active: false }
+    { id: "active", sku: "TEST-001", price: 10, active: true },
+    { id: "hidden", sku: "TEST-002", price: 10, active: false }
   ]);
   const products = await new ProductService(repository).catalog();
   assert.deepEqual(products.map((product) => product.id), ["active"]);

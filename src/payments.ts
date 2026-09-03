@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { HttpApplication, HttpError, type Json, requireFields } from "./core.js";
-type CheckoutItem={productId:string;quantity:number}; type CatalogProduct={id:string;name:string;price:number};
+type CheckoutItem={productId:string;quantity:number}; type CatalogProduct={id:string;price:number};
 export interface PaymentProvider{createSession(order:{id:string;amount:number;items:CheckoutItem[]}):Promise<{checkoutUrl:string;providerReference:string}>;}
 export class DevelopmentPaymentProvider implements PaymentProvider{async createSession(order:{id:string}):Promise<{checkoutUrl:string;providerReference:string}>{return{checkoutUrl:`http://localhost:4173/#/payment?session=${encodeURIComponent(order.id)}`,providerReference:`dev_${order.id}`};}}
 export class ProductCatalogClient{constructor(private readonly baseUrl=process.env.PRODUCT_SERVICE_URL??"http://localhost:4002"){}async get(id:string):Promise<CatalogProduct>{const response=await fetch(`${this.baseUrl}/products/${encodeURIComponent(id)}`);if(!response.ok)throw new HttpError(400,`Unknown product: ${id}`);return await response.json() as CatalogProduct;}}
