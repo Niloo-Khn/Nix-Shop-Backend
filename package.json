@@ -1,0 +1,17 @@
+{
+  "name": "nix-shop-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "test": "npm run build && node --test dist/services.test.js",
+    "start:accounts": "SERVICE=accounts node dist/main.js",
+    "start:products": "SERVICE=products node dist/main.js",
+    "start:payments": "SERVICE=payments node dist/main.js",
+    "start:help": "SERVICE=help node dist/main.js"
+  },
+  "devDependencies": { "@types/node": "^24.3.0", "typescript": "^5.9.2" },
+  "engines": { "node": ">=20" }
+}

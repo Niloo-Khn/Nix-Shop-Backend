@@ -1,0 +1,33 @@
+services:
+  accounts:
+    build: .
+    environment:
+      SERVICE: accounts
+      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in .env}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
+    ports: ["4001:4001"]
+    read_only: true
+  products:
+    build: .
+    environment:
+      SERVICE: products
+      ADMIN_API_KEY: ${ADMIN_API_KEY:?Set ADMIN_API_KEY in .env}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
+    ports: ["4002:4002"]
+    read_only: true
+  payments:
+    build: .
+    environment:
+      SERVICE: payments
+      PRODUCT_SERVICE_URL: http://products:4002
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
+    ports: ["4003:4003"]
+    depends_on: [products]
+    read_only: true
+  help:
+    build: .
+    environment:
+      SERVICE: help
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
+    ports: ["4004:4004"]
+    read_only: true
