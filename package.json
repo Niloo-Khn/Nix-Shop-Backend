@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "check": "tsc --noEmit",
-    "test": "npm run build && node --test dist/services.test.js",
+    "test": "npm run build && node --test dist/accounts.test.js dist/products.test.js dist/payments.test.js dist/help.test.js",
     "start:accounts": "SERVICE=accounts node dist/main.js",
     "start:products": "SERVICE=products node dist/main.js",
     "start:payments": "SERVICE=payments node dist/main.js",
