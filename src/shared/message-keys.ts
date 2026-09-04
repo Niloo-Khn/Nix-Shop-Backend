@@ -18,6 +18,10 @@ export const ERROR_KEYS = {
   quantityInvalid: "payment.quantity_invalid",
   orderNotFound: "order.not_found",
   orderUnavailable: "order.unavailable",
+  promotionInvalid: "promotion.invalid",
+  promotionInactive: "promotion.inactive",
+  returnItemsInvalid: "return.items_invalid",
+  returnQuantityInvalid: "return.quantity_invalid",
   serviceInvalid: "service.invalid"
 } as const;
 

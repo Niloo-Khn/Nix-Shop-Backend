@@ -41,7 +41,26 @@ services:
       SERVICE: orders
       HOST: 0.0.0.0
       PRODUCT_SERVICE_URL: http://products:4002
+      PROMOTION_SERVICE_URL: http://promotions:4006
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4005:4005"]
-    depends_on: [products]
+    depends_on: [products, promotions]
+    read_only: true
+  promotions:
+    build: .
+    environment:
+      SERVICE: promotions
+      HOST: 0.0.0.0
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
+    ports: ["4006:4006"]
+    read_only: true
+  returns:
+    build: .
+    environment:
+      SERVICE: returns
+      HOST: 0.0.0.0
+      ORDER_SERVICE_URL: http://orders:4005
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
+    ports: ["4007:4007"]
+    depends_on: [orders]
     read_only: true
