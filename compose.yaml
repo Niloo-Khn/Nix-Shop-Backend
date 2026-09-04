@@ -3,6 +3,7 @@ services:
     build: .
     environment:
       SERVICE: accounts
+      HOST: 0.0.0.0
       AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in .env}
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4001:4001"]
@@ -11,6 +12,7 @@ services:
     build: .
     environment:
       SERVICE: products
+      HOST: 0.0.0.0
       ADMIN_API_KEY: ${ADMIN_API_KEY:?Set ADMIN_API_KEY in .env}
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4002:4002"]
@@ -19,6 +21,7 @@ services:
     build: .
     environment:
       SERVICE: payments
+      HOST: 0.0.0.0
       PRODUCT_SERVICE_URL: http://products:4002
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4003:4003"]
@@ -28,6 +31,7 @@ services:
     build: .
     environment:
       SERVICE: help
+      HOST: 0.0.0.0
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4004:4004"]
     read_only: true

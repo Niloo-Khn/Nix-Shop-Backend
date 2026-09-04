@@ -1,4 +1,4 @@
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { randomUUID } from "node:crypto";
 import { ERROR_KEYS, type ErrorKey } from "./message-keys.js";
 
@@ -26,8 +26,8 @@ export class HttpApplication {
     const pattern = new RegExp(`^${path.replace(/:([A-Za-z]+)/g, (_, key: string) => { keys.push(key); return "([^/]+)"; })}$`);
     this.routes.push({ method, pattern, keys, handler });
   }
-  listen(port: number): void {
-    createServer(async (request, response) => {
+  listen(port: number, host = process.env.HOST ?? "127.0.0.1"): Server {
+    const server = createServer(async (request, response) => {
       this.securityHeaders(response);
       if (request.method === "OPTIONS") { response.writeHead(204); response.end(); return; }
       const pathname = new URL(request.url ?? "/", "http://localhost").pathname;
@@ -37,7 +37,9 @@ export class HttpApplication {
       route.keys.forEach((key, index) => { params[key] = decodeURIComponent(match?.[index + 1] ?? ""); });
       try { const result = await route.handler(new RequestContext(request, params)); this.send(response, result.status ?? 200, result.body ?? null); }
       catch (error) { const status = error instanceof HttpError ? error.status : 500; const key = error instanceof HttpError ? error.key : ERROR_KEYS.internal; const details = error instanceof HttpError ? error.details : {}; this.send(response, status, { error: { key, details }, requestId: randomUUID() }); if (status === 500) console.error(error); }
-    }).listen(port, () => console.log(`${this.name} listening on http://localhost:${port}`));
+    });
+    server.listen(port, host, () => { const address = server.address(); const actualPort = typeof address === "object" && address ? address.port : port; console.log(`${this.name} listening on http://${host}:${actualPort}`); });
+    return server;
   }
   private securityHeaders(response: ServerResponse): void {
     response.setHeader("Access-Control-Allow-Origin", this.allowedOrigin); response.setHeader("Vary", "Origin");

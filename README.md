@@ -49,6 +49,18 @@ The frontend runs at `http://localhost:4173`. It loads products from port 4002 a
 
 `POST /products` is already separated from the public catalog and requires `X-Admin-Key`. Before a real back office ships, replace that temporary key with account-service roles and short-lived authorization tokens, add audit logs, and use a persistent database.
 
+## Tests
+
+Each microservice has separate unit and HTTP integration tests.
+
+```bash
+npm test                 # Unit tests for all four services
+npm run test:integration # Real HTTP/API integration tests
+npm run test:all         # Both suites
+```
+
+Integration tests use ephemeral loopback ports and close every service after the test completes. The payment integration test starts both product and payment services to verify server-authoritative pricing across the service boundary.
+
 ## Production requirements
 
 - Replace all in-memory repositories with isolated persistent databases owned by each service.
