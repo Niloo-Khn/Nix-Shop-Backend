@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { HttpError, InMemoryRepository } from "./core.js";
-import { HelpCenterService, type Article, type Ticket } from "./help.js";
-import { ERROR_KEYS } from "./message-keys.js";
+import { HttpError, InMemoryRepository } from "../../src/shared/core.js";
+import { HelpCenterService, type Article, type Ticket } from "../../src/services/help.service.js";
+import { ERROR_KEYS } from "../../src/shared/message-keys.js";
 
 test("help service returns article keys without presentation text", async () => {
   const service = new HelpCenterService(new InMemoryRepository<Article>([{ id: "shipping" }]), new InMemoryRepository<Ticket>());

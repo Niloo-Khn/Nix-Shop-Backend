@@ -51,6 +51,17 @@ The frontend runs at `http://localhost:4173`. It loads products from port 4002 a
 
 ## Tests
 
+The codebase is categorized by responsibility:
+
+```text
+src/
+  services/       Service implementations
+  shared/         HTTP, repositories, and message keys
+tests/
+  unit/           Isolated business-logic tests
+  integration/    Real HTTP and cross-service tests
+```
+
 Each microservice has separate unit and HTTP integration tests.
 
 ```bash

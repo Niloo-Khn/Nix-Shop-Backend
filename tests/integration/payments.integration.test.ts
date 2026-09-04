@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createPaymentApp } from "./payments.js";
-import { createProductApp } from "./products.js";
-import { json, startService } from "./integration-test-helpers.js";
-import { ERROR_KEYS } from "./message-keys.js";
+import { createPaymentApp } from "../../src/services/payments.service.js";
+import { createProductApp } from "../../src/services/products.service.js";
+import { json, startService } from "./helpers.js";
+import { ERROR_KEYS } from "../../src/shared/message-keys.js";
 
 test("payment API obtains trusted prices from product API", async (context) => {
   const products = await startService(createProductApp());

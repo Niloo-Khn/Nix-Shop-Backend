@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createAccountApp } from "./accounts.js";
-import { json, startService } from "./integration-test-helpers.js";
-import { ERROR_KEYS } from "./message-keys.js";
+import { createAccountApp } from "../../src/services/accounts.service.js";
+import { json, startService } from "./helpers.js";
+import { ERROR_KEYS } from "../../src/shared/message-keys.js";
 
 test("account API registers and authenticates through HTTP", async (context) => {
   process.env.AUTH_SECRET = "integration-test-secret-with-32-characters";

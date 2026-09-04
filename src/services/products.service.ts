@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { HttpApplication, HttpError, InMemoryRepository, type Json, type Repository, requireAdmin, requireFields } from "./core.js";
-import { ERROR_KEYS } from "./message-keys.js";
+import { HttpApplication, HttpError, InMemoryRepository, type Json, type Repository, requireAdmin, requireFields } from "../shared/core.js";
+import { ERROR_KEYS } from "../shared/message-keys.js";
 
 export type Product = { id: string; sku: string; price: number; active: boolean };
 const seed: Product[] = [

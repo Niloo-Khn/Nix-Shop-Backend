@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json tsconfig.json ./
 RUN npm ci
 COPY src ./src
+COPY tests ./tests
 RUN npm run build
 
 FROM node:22-alpine
@@ -11,4 +12,4 @@ USER node
 WORKDIR /app
 COPY --from=build --chown=node:node /app/dist ./dist
 COPY --from=build --chown=node:node /app/package.json ./package.json
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]

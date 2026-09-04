@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { HttpError, InMemoryRepository } from "./core.js";
-import { ERROR_KEYS } from "./message-keys.js";
-import { ProductService, type Product } from "./products.js";
+import { HttpError, InMemoryRepository } from "../../src/shared/core.js";
+import { ERROR_KEYS } from "../../src/shared/message-keys.js";
+import { ProductService, type Product } from "../../src/services/products.service.js";
 
 const records: Product[] = [
   { id: "active", sku: "TEST-001", price: 10, active: true },

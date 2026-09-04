@@ -1,6 +1,6 @@
 import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
-import type { HttpApplication } from "./core.js";
+import type { HttpApplication } from "../../src/shared/core.js";
 
 export type RunningService = { baseUrl: string; close(): Promise<void> };
 

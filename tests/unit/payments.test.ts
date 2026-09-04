@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { HttpError } from "./core.js";
-import { ERROR_KEYS } from "./message-keys.js";
-import { PaymentService, type PaymentProvider, type ProductCatalog } from "./payments.js";
+import { HttpError } from "../../src/shared/core.js";
+import { ERROR_KEYS } from "../../src/shared/message-keys.js";
+import { PaymentService, type PaymentProvider, type ProductCatalog } from "../../src/services/payments.service.js";
 
 const catalog: ProductCatalog = { async get(id) { return { id, price: id === "bed" ? 40 : 5 }; } };
 const provider: PaymentProvider = { async createSession(order) { return { checkoutUrl: `https://pay.test/${order.id}`, providerReference: "provider-test" }; } };

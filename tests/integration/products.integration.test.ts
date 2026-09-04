@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createProductApp, type Product } from "./products.js";
-import { json, startService } from "./integration-test-helpers.js";
-import { ERROR_KEYS } from "./message-keys.js";
+import { createProductApp, type Product } from "../../src/services/products.service.js";
+import { json, startService } from "./helpers.js";
+import { ERROR_KEYS } from "../../src/shared/message-keys.js";
 
 test("product API serves catalog and protects writes", async (context) => {
   process.env.ADMIN_API_KEY = "integration-admin-key";

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { HttpApplication, InMemoryRepository, type Json, type Repository, requireFields } from "./core.js";
+import { HttpApplication, InMemoryRepository, type Json, type Repository, requireFields } from "../shared/core.js";
 export type Article={id:string}; export type Ticket={id:string;email:string;subject:string;message:string;status:"open";createdAt:string};
 const articles:Article[]=[{id:"shipping"},{id:"returns"},{id:"payments"}];
 export class HelpCenterService{constructor(private readonly articleRepository:Repository<Article>,private readonly ticketRepository:Repository<Ticket>){}articles(){return this.articleRepository.list();}async createTicket(input:unknown){const b=requireFields(input,["email","subject","message"]);return this.ticketRepository.save({id:randomUUID(),email:String(b.email).slice(0,254),subject:String(b.subject).slice(0,120),message:String(b.message).slice(0,4000),status:"open",createdAt:new Date().toISOString()});}}

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { HttpApplication, HttpError, type Json, requireFields } from "./core.js";
-import { ERROR_KEYS } from "./message-keys.js";
+import { HttpApplication, HttpError, type Json, requireFields } from "../shared/core.js";
+import { ERROR_KEYS } from "../shared/message-keys.js";
 export type CheckoutItem={productId:string;quantity:number}; export type CatalogProduct={id:string;price:number};
 export interface ProductCatalog{get(id:string):Promise<CatalogProduct>;}
 export interface PaymentProvider{createSession(order:{id:string;amount:number;items:CheckoutItem[]}):Promise<{checkoutUrl:string;providerReference:string}>;}

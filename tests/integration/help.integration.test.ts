@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createHelpApp } from "./help.js";
-import { json, startService } from "./integration-test-helpers.js";
-import { ERROR_KEYS } from "./message-keys.js";
+import { createHelpApp } from "../../src/services/help.service.js";
+import { json, startService } from "./helpers.js";
+import { ERROR_KEYS } from "../../src/shared/message-keys.js";
 
 test("help API lists article keys and accepts tickets", async (context) => {
   const service = await startService(createHelpApp());

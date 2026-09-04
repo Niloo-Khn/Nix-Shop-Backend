@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { AccountService, PasswordHasher, TokenIssuer, type Account } from "./accounts.js";
-import { HttpError, InMemoryRepository } from "./core.js";
-import { ERROR_KEYS } from "./message-keys.js";
+import { AccountService, PasswordHasher, TokenIssuer, type Account } from "../../src/services/accounts.service.js";
+import { HttpError, InMemoryRepository } from "../../src/shared/core.js";
+import { ERROR_KEYS } from "../../src/shared/message-keys.js";
 
 test("account service registers and logs in a normalized account", async () => {
   const repository = new InMemoryRepository<Account>();
