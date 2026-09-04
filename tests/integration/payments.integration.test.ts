@@ -2,22 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createPaymentApp } from "../../src/services/payments.service.js";
 import { createProductApp } from "../../src/services/products.service.js";
+import { createOrderApp, type Order } from "../../src/services/orders.service.js";
 import { json, startService } from "./helpers.js";
 import { ERROR_KEYS } from "../../src/shared/message-keys.js";
 
-test("payment API obtains trusted prices from product API", async (context) => {
-  const products = await startService(createProductApp());
-  context.after(() => products.close());
-  process.env.PRODUCT_SERVICE_URL = products.baseUrl;
-  const payments = await startService(createPaymentApp());
-  context.after(() => payments.close());
-  const response = await fetch(`${payments.baseUrl}/checkout-sessions`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({items:[{productId:"cloud-bed",quantity:2}]}) });
-  assert.equal(response.status, 201);
-  const checkout = await json<{amount:number;currency:string;providerReference:string}>(response);
-  assert.equal(checkout.amount, 136);
-  assert.equal(checkout.currency, "USD");
-  assert.match(checkout.providerReference, /^dev_/);
-  const invalid = await fetch(`${payments.baseUrl}/checkout-sessions`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({items:[{productId:"missing",quantity:1}]}) });
-  assert.equal(invalid.status, 400);
-  assert.equal((await json<{error:{key:string}}>(invalid)).error.key, ERROR_KEYS.productUnknown);
-});
+test("payment API uses an order created from trusted product prices",async(context)=>{const products=await startService(createProductApp());context.after(()=>products.close());process.env.PRODUCT_SERVICE_URL=products.baseUrl;const orders=await startService(createOrderApp());context.after(()=>orders.close());process.env.ORDER_SERVICE_URL=orders.baseUrl;const payments=await startService(createPaymentApp());context.after(()=>payments.close());const orderResponse=await fetch(`${orders.baseUrl}/orders`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:[{productId:"cloud-bed",quantity:2}]})});const order=await json<Order>(orderResponse);const response=await fetch(`${payments.baseUrl}/checkout-sessions`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({orderId:order.id})});assert.equal(response.status,201);const checkout=await json<{amount:number;orderId:string;providerReference:string}>(response);assert.equal(checkout.amount,136);assert.equal(checkout.orderId,order.id);assert.match(checkout.providerReference,/^dev_/);const invalid=await fetch(`${payments.baseUrl}/checkout-sessions`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({orderId:"missing"})});assert.equal(invalid.status,400);assert.equal((await json<{error:{key:string}}>(invalid)).error.key,ERROR_KEYS.orderNotFound);});

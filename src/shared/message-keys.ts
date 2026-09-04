@@ -16,6 +16,8 @@ export const ERROR_KEYS = {
   priceInvalid: "product.price_invalid",
   itemCountInvalid: "payment.item_count_invalid",
   quantityInvalid: "payment.quantity_invalid",
+  orderNotFound: "order.not_found",
+  orderUnavailable: "order.unavailable",
   serviceInvalid: "service.invalid"
 } as const;
 

@@ -10,6 +10,7 @@ Provider-neutral TypeScript microservices for Nix-Shop. The frontend remains in 
 | Product | 4002 | Public catalog and protected product creation |
 | Payment | 4003 | Server-authoritative totals and hosted-checkout sessions |
 | Help center | 4004 | Help articles and support tickets |
+| Order | 4005 | Trusted order totals, line snapshots, and order state |
 
 ## API endpoints
 
@@ -17,6 +18,7 @@ Provider-neutral TypeScript microservices for Nix-Shop. The frontend remains in 
 - Products: `GET /products`, `GET /products/:id`, protected `POST /products`, `GET /health`
 - Payments: `POST /checkout-sessions`, `GET /health`
 - Help center: `GET /articles`, `POST /tickets`, `GET /health`
+- Orders: `POST /orders`, `GET /orders/:id`, `GET /health`
 
 Each service is an independent process. Shared transport and repository interfaces live in `src/core.ts`; business behavior lives in service classes. The current in-memory repositories can later be replaced with PostgreSQL implementations without changing controllers or use cases.
 
@@ -35,6 +37,7 @@ npm run start:accounts
 npm run start:products
 npm run start:payments
 npm run start:help
+npm run start:orders
 ```
 
 Or set strong values in `.env` and run:

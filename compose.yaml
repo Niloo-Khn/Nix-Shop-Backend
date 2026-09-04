@@ -22,10 +22,10 @@ services:
     environment:
       SERVICE: payments
       HOST: 0.0.0.0
-      PRODUCT_SERVICE_URL: http://products:4002
+      ORDER_SERVICE_URL: http://orders:4005
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4003:4003"]
-    depends_on: [products]
+    depends_on: [orders]
     read_only: true
   help:
     build: .
@@ -34,4 +34,14 @@ services:
       HOST: 0.0.0.0
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4004:4004"]
+    read_only: true
+  orders:
+    build: .
+    environment:
+      SERVICE: orders
+      HOST: 0.0.0.0
+      PRODUCT_SERVICE_URL: http://products:4002
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
+    ports: ["4005:4005"]
+    depends_on: [products]
     read_only: true

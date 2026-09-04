@@ -12,7 +12,8 @@
     "start:accounts": "SERVICE=accounts node dist/src/main.js",
     "start:products": "SERVICE=products node dist/src/main.js",
     "start:payments": "SERVICE=payments node dist/src/main.js",
-    "start:help": "SERVICE=help node dist/src/main.js"
+    "start:help": "SERVICE=help node dist/src/main.js",
+    "start:orders": "SERVICE=orders node dist/src/main.js"
   },
   "devDependencies": { "@types/node": "^24.3.0", "typescript": "^5.9.2" },
   "engines": { "node": ">=20" }
