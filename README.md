@@ -16,7 +16,7 @@ Provider-neutral TypeScript microservices for Nix-Shop. The frontend remains in 
 
 ## API endpoints
 
-- Accounts: `POST /accounts/register`, `POST /accounts/login`, `GET /accounts/session`, `GET /health`
+- Accounts: `POST /accounts/register`, `POST /accounts/login`, `POST /accounts/password-reset/request`, `GET /accounts/session`, authenticated `GET/PUT /accounts/me`, `GET /health`
 - Products: `GET /products`, `GET /products/:id`, protected `POST /products`, `GET /health`
 - Payments: `POST /checkout-sessions`, `GET /health`
 - Help center: `GET /articles`, `POST /tickets`, `GET /health`
@@ -88,4 +88,5 @@ Integration tests use ephemeral loopback ports and close every service after the
 - Use a secrets manager for `AUTH_SECRET`, admin credentials, and provider keys.
 - Put services behind TLS, a gateway, rate limiting, centralized logging, and monitoring.
 - Restrict CORS to the deployed frontend origin and add idempotency to payment creation.
-- Add email verification, password reset, token rotation, and abuse protection to accounts.
+- Add email verification, token rotation, and abuse protection to accounts.
+- Connect the privacy-safe password-reset request endpoint to an email provider and expiring, single-use reset tokens before production.
