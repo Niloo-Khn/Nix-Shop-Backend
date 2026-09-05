@@ -11,6 +11,7 @@ export class HttpError extends Error { constructor(public readonly status: numbe
 export class RequestContext {
   constructor(public readonly request: IncomingMessage, public readonly params: Record<string, string>) {}
   get header(): Record<string, string | string[] | undefined> { return this.request.headers; }
+  get query(): URLSearchParams { return new URL(this.request.url ?? "/", "http://localhost").searchParams; }
   async json<T>(): Promise<T> {
     const chunks: Buffer[] = []; let size = 0;
     for await (const chunk of this.request) { size += chunk.length; if (size > 32_768) throw new HttpError(413, ERROR_KEYS.requestTooLarge); chunks.push(chunk); }

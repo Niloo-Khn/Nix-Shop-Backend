@@ -18,6 +18,10 @@ test("account API registers and authenticates through HTTP", async (context) => 
   const login = await fetch(`${service.baseUrl}/accounts/login`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({email:"pet@example.com",password:"long-test-password"}) });
   assert.equal(login.status, 200);
   assert.match((await json<{accessToken:string}>(login)).accessToken, /^[\w-]+\.[\w-]+$/);
+  const authenticated=await fetch(`${service.baseUrl}/accounts/login`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:"pet@example.com",password:"long-test-password"})});
+  const authorization=`Bearer ${(await json<{accessToken:string}>(authenticated)).accessToken}`;
+  const update=await fetch(`${service.baseUrl}/accounts/me`,{method:"PUT",headers:{"Content-Type":"application/json",Authorization:authorization},body:JSON.stringify({displayName:"Pet Parent",phone:"555-0100",address:"1 Pet Street",birthday:"1990-05-12"})});
+  assert.equal(update.status,200);assert.equal((await json<{address:string}>(update)).address,"1 Pet Street");
   const rejected = await fetch(`${service.baseUrl}/accounts/login`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({email:"pet@example.com",password:"wrong-password"}) });
   assert.equal(rejected.status, 401);
   assert.equal((await json<{error:{key:string}}>(rejected)).error.key, ERROR_KEYS.credentialsInvalid);

@@ -33,3 +33,5 @@ test("password hashes use unique salts and verify safely", async () => {
   assert.equal(await hasher.verify("long-test-password", first), true);
   assert.equal(await hasher.verify("wrong-password", first), false);
 });
+
+test("account service reads and updates profile details",async()=>{const repository=new InMemoryRepository<Account>();const service=new AccountService(repository,new PasswordHasher(),new TokenIssuer("a-secure-test-secret-with-32-characters"));const account=await service.register({email:"profile@example.com",displayName:"Old Name",password:"long-test-password"});const updated=await service.update(account.id,{displayName:"New Name",phone:"555-0100",address:"1 Pet Street",birthday:"1990-05-12"});assert.equal(updated.displayName,"New Name");assert.equal(updated.address,"1 Pet Street");assert.equal("passwordHash" in updated,false);assert.deepEqual(await service.profile(account.id),updated);});

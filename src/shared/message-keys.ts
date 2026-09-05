@@ -12,6 +12,7 @@ export const ERROR_KEYS = {
   accountExists: "account.already_exists",
   credentialsInvalid: "account.invalid_credentials",
   tokenInvalid: "account.invalid_token",
+  profileInvalid: "account.profile_invalid",
   serviceAuthRequired: "auth.service_required",
   productUnknown: "product.unknown",
   productNotFound: "product.not_found",
@@ -24,6 +25,7 @@ export const ERROR_KEYS = {
   promotionInactive: "promotion.inactive",
   returnItemsInvalid: "return.items_invalid",
   returnQuantityInvalid: "return.quantity_invalid",
+  returnWindowExpired: "return.window_expired",
   serviceInvalid: "service.invalid"
 } as const;
 
