@@ -9,14 +9,14 @@
     "test": "npm run build && node --test dist/tests/unit/*.test.js",
     "test:integration": "npm run build && node --test dist/tests/integration/*.integration.test.js",
     "test:all": "npm run test && npm run test:integration",
-    "start:accounts": "SERVICE=accounts node dist/src/main.js",
-    "start:products": "SERVICE=products node dist/src/main.js",
-    "start:payments": "SERVICE=payments node dist/src/main.js",
-    "start:help": "SERVICE=help node dist/src/main.js",
-    "start:orders": "SERVICE=orders node dist/src/main.js",
-    "start:promotions": "SERVICE=promotions node dist/src/main.js",
-    "start:returns": "SERVICE=returns node dist/src/main.js"
+    "start:accounts": "SERVICE=accounts node --env-file-if-exists=.env dist/src/main.js",
+    "start:products": "SERVICE=products node --env-file-if-exists=.env dist/src/main.js",
+    "start:payments": "SERVICE=payments node --env-file-if-exists=.env dist/src/main.js",
+    "start:help": "SERVICE=help node --env-file-if-exists=.env dist/src/main.js",
+    "start:orders": "SERVICE=orders node --env-file-if-exists=.env dist/src/main.js",
+    "start:promotions": "SERVICE=promotions node --env-file-if-exists=.env dist/src/main.js",
+    "start:returns": "SERVICE=returns node --env-file-if-exists=.env dist/src/main.js"
   },
   "devDependencies": { "@types/node": "^24.3.0", "typescript": "^5.9.2" },
-  "engines": { "node": ">=20" }
+  "engines": { "node": ">=22.5" }
 }

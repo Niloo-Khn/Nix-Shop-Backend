@@ -1,12 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createAccountApp } from "../../src/services/accounts.service.js";
+import { createAccountApp, type Account } from "../../src/services/accounts.service.js";
 import { json, startService } from "./helpers.js";
 import { ERROR_KEYS } from "../../src/shared/message-keys.js";
+import { InMemoryRepository } from "../../src/shared/core.js";
 
 test("account API registers and authenticates through HTTP", async (context) => {
   process.env.AUTH_SECRET = "integration-test-secret-with-32-characters";
-  const service = await startService(createAccountApp());
+  const service = await startService(createAccountApp(new InMemoryRepository<Account>()));
   context.after(() => service.close());
   const preflight = await fetch(`${service.baseUrl}/accounts/register`, { method:"OPTIONS", headers:{Origin:"http://localhost:4173","Access-Control-Request-Method":"POST","Access-Control-Request-Headers":"content-type"} });
   assert.equal(preflight.status, 204);

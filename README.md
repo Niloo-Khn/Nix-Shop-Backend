@@ -6,7 +6,7 @@ Provider-neutral TypeScript microservices for Nix-Shop. The frontend remains in 
 
 | Service | Port | Responsibility |
 | --- | ---: | --- |
-| Account | 4001 | Registration, password hashing, login tokens |
+| Account | 4001 | Persistent SQLite accounts, password hashing, login tokens |
 | Product | 4002 | Public catalog and protected product creation |
 | Payment | 4003 | Server-authoritative totals and hosted-checkout sessions |
 | Help center | 4004 | Help articles and support tickets |
@@ -52,7 +52,7 @@ Or set strong values in `.env` and run:
 docker compose up --build
 ```
 
-The frontend runs at `http://localhost:4173`. It loads products from port 4002 and requests checkout sessions from port 4003. If the backend is unavailable, it displays a small fallback catalog.
+The frontend runs at `http://localhost:4173`. Account records persist in `data/accounts.sqlite` by default; override this with `ACCOUNT_DATABASE_PATH`. It loads products from port 4002 and requests checkout sessions from port 4003. If the backend is unavailable, it displays a small fallback catalog.
 
 ## Back office later
 

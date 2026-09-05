@@ -7,6 +7,7 @@ services:
       AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in .env}
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4001:4001"]
+    volumes: ["account-data:/app/data"]
     read_only: true
   products:
     build: .
@@ -67,3 +68,6 @@ services:
     ports: ["4007:4007"]
     depends_on: [orders]
     read_only: true
+
+volumes:
+  account-data:
