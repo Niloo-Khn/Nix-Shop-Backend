@@ -9,6 +9,8 @@ export const ERROR_KEYS = {
   passwordTooShort: "account.password_too_short",
   secretMissing: "account.auth_secret_missing",
   emailInvalid: "account.email_invalid",
+  nameInvalid: "account.name_invalid",
+  phoneInvalid: "account.phone_invalid",
   accountExists: "account.already_exists",
   credentialsInvalid: "account.invalid_credentials",
   tokenInvalid: "account.invalid_token",
