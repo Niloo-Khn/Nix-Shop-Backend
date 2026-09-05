@@ -11,6 +11,8 @@ export const ERROR_KEYS = {
   emailInvalid: "account.email_invalid",
   accountExists: "account.already_exists",
   credentialsInvalid: "account.invalid_credentials",
+  tokenInvalid: "account.invalid_token",
+  serviceAuthRequired: "auth.service_required",
   productUnknown: "product.unknown",
   productNotFound: "product.not_found",
   priceInvalid: "product.price_invalid",

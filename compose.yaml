@@ -23,6 +23,7 @@ services:
       SERVICE: payments
       HOST: 0.0.0.0
       ORDER_SERVICE_URL: http://orders:4005
+      SERVICE_API_KEY: ${SERVICE_API_KEY:?Set SERVICE_API_KEY in .env}
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4003:4003"]
     depends_on: [orders]
@@ -42,9 +43,11 @@ services:
       HOST: 0.0.0.0
       PRODUCT_SERVICE_URL: http://products:4002
       PROMOTION_SERVICE_URL: http://promotions:4006
+      ACCOUNT_SERVICE_URL: http://accounts:4001
+      SERVICE_API_KEY: ${SERVICE_API_KEY:?Set SERVICE_API_KEY in .env}
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4005:4005"]
-    depends_on: [products, promotions]
+    depends_on: [accounts, products, promotions]
     read_only: true
   promotions:
     build: .

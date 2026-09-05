@@ -8,7 +8,7 @@ export interface PaymentProvider { createSession(payment: { id: string; order: O
 
 export class OrderClient implements OrderReader {
   constructor(private readonly baseUrl = process.env.ORDER_SERVICE_URL ?? "http://localhost:4005") {}
-  async get(id: string): Promise<Order> { const response = await fetch(`${this.baseUrl}/orders/${encodeURIComponent(id)}`); if (!response.ok) throw new HttpError(400, ERROR_KEYS.orderNotFound, { id }); return response.json() as Promise<Order>; }
+  async get(id: string): Promise<Order> { const serviceKey=process.env.SERVICE_API_KEY;if(!serviceKey)throw new HttpError(503,ERROR_KEYS.serviceAuthRequired);const response = await fetch(`${this.baseUrl}/orders/${encodeURIComponent(id)}`,{headers:{"X-Service-Key":serviceKey}}); if (!response.ok) throw new HttpError(400, ERROR_KEYS.orderNotFound, { id }); return response.json() as Promise<Order>; }
 }
 export class DevelopmentPaymentProvider implements PaymentProvider {
   async createSession(payment: { id: string }): Promise<{ checkoutUrl: string; providerReference: string }> { return { checkoutUrl: `http://localhost:4173/#/payment?session=${encodeURIComponent(payment.id)}`, providerReference: `dev_${payment.id}` }; }

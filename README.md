@@ -16,13 +16,13 @@ Provider-neutral TypeScript microservices for Nix-Shop. The frontend remains in 
 
 ## API endpoints
 
-- Accounts: `POST /accounts/register`, `POST /accounts/login`, `GET /health`
+- Accounts: `POST /accounts/register`, `POST /accounts/login`, `GET /accounts/session`, `GET /health`
 - Products: `GET /products`, `GET /products/:id`, protected `POST /products`, `GET /health`
 - Payments: `POST /checkout-sessions`, `GET /health`
 - Help center: `GET /articles`, `POST /tickets`, `GET /health`
-- Orders: `POST /orders`, `GET /orders/:id`, `GET /health`
+- Orders: authenticated `POST /orders`, authenticated `GET /orders`, authenticated `GET /orders/:id`, `GET /health`
 - Promotions: `GET /promotions`, `POST /promotions/validate`, `GET /health`
-- Returns: `POST /returns`, `GET /returns/:id`, `GET /health`
+- Returns: authenticated `POST /returns`, authenticated `GET /returns/:id`, `GET /health`
 
 Each service is an independent process. Shared transport and repository interfaces live in `src/core.ts`; business behavior lives in service classes. The current in-memory repositories can later be replaced with PostgreSQL implementations without changing controllers or use cases.
 

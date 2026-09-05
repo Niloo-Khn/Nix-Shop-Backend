@@ -1,6 +1,7 @@
 import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import type { HttpApplication } from "../../src/shared/core.js";
+import { createAccountApp } from "../../src/services/accounts.service.js";
 
 export type RunningService = { baseUrl: string; close(): Promise<void> };
 
@@ -16,3 +17,5 @@ function closeServer(server: Server): Promise<void> {
 }
 
 export async function json<T>(response: Response): Promise<T> { return response.json() as Promise<T>; }
+
+export async function startAuthenticatedAccount():Promise<{service:RunningService;authorization:string}>{process.env.AUTH_SECRET="integration-account-secret-with-32-characters";const service=await startService(createAccountApp());await fetch(`${service.baseUrl}/accounts/register`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:"history@example.com",displayName:"History User",password:"long-test-password"})});const response=await fetch(`${service.baseUrl}/accounts/login`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:"history@example.com",password:"long-test-password"})});const result=await json<{accessToken:string}>(response);return{service,authorization:`Bearer ${result.accessToken}`};}
