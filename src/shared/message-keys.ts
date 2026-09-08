@@ -23,6 +23,7 @@ export const ERROR_KEYS = {
   quantityInvalid: "payment.quantity_invalid",
   orderNotFound: "order.not_found",
   orderUnavailable: "order.unavailable",
+  paymentMethodInvalid: "payment.method_invalid",
   promotionInvalid: "promotion.invalid",
   promotionInactive: "promotion.inactive",
   returnItemsInvalid: "return.items_invalid",

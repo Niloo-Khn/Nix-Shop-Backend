@@ -26,6 +26,8 @@ Provider-neutral TypeScript microservices for Nix-Shop. The frontend remains in 
 
 Each service is an independent process. Shared transport and repository interfaces live in `src/core.ts`; business behavior lives in service classes. The current in-memory repositories can later be replaced with PostgreSQL implementations without changing controllers or use cases.
 
+Checkout sessions accept `paypal`, `apple_pay`, `klarna`, or `card`. The local development provider simulates a successful hosted handoff; production must connect these method keys to real provider SDKs and confirm payment using signed webhooks.
+
 ## Local setup
 
 ```bash

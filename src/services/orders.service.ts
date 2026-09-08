@@ -3,7 +3,7 @@ import { HttpApplication, HttpError, InMemoryRepository, type Json, type Reposit
 import { ERROR_KEYS } from "../shared/message-keys.js";
 
 export type OrderItem = { productId: string; quantity: number; unitPrice: number };
-export type Order = { id: string; accountId: string; items: OrderItem[]; subtotal: number; discount: number; amount: number; promotionId?: string; currency: "USD"; status: "pending" | "paid" | "cancelled"; shippingAddress:string;createdAt: string };
+export type Order = { id: string; accountId: string; items: OrderItem[]; subtotal: number; discount: number;shipping:number; amount: number; promotionId?: string; currency: "USD"; status: "pending" | "paid" | "cancelled"; shippingAddress:string;createdAt: string };
 export type CatalogProduct = { id: string; price: number };
 export interface ProductCatalog { get(id: string): Promise<CatalogProduct>; }
 export interface PromotionValidator { validate(code: string, amount: number): Promise<{ promotionId: string; discount: number }>; }
@@ -28,7 +28,8 @@ export class OrderService {
     for (const value of values) { const body = requireFields(value, ["productId"]); const quantity = Number(body.quantity); if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10) throw new HttpError(400, ERROR_KEYS.quantityInvalid); const product = await this.catalog.get(String(body.productId)); items.push({ productId: product.id, quantity, unitPrice: product.price }); amount += product.price * quantity; }
     const promotionCode=(input as {promotionCode?:unknown}).promotionCode;const promotion=typeof promotionCode==="string"&&promotionCode.trim()?await this.promotions.validate(promotionCode,amount):undefined;
     const requestedAddress=(input as {shippingAddress?:unknown}).shippingAddress;const shippingAddress=typeof requestedAddress==="string"?requestedAddress.trim().slice(0,500):defaultAddress;
-    return this.repository.save({ id: randomUUID(), accountId, items, subtotal:amount, discount:promotion?.discount??0, amount:Math.max(0,amount-(promotion?.discount??0)), ...(promotion?.promotionId?{promotionId:promotion.promotionId}:{}), currency: "USD", status: "pending",shippingAddress, createdAt: new Date().toISOString() });
+    const discount=promotion?.discount??0;const discounted=Math.max(0,amount-discount);const shipping=discounted>0&&discounted<60?6:0;
+    return this.repository.save({ id: randomUUID(), accountId, items, subtotal:amount,discount,shipping,amount:discounted+shipping, ...(promotion?.promotionId?{promotionId:promotion.promotionId}:{}), currency: "USD", status: "pending",shippingAddress, createdAt: new Date().toISOString() });
   }
   async get(id: string): Promise<Order> { const order = await this.repository.find(id); if (!order) throw new HttpError(404, ERROR_KEYS.orderNotFound, { id }); return order; }
   async history(accountId:string,offset=0,limit=10):Promise<{orders:Order[];hasMore:boolean;nextOffset:number}>{const all=(await this.repository.list()).filter((order)=>order.accountId===accountId).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));const safeOffset=Math.max(0,offset);const safeLimit=Math.max(1,Math.min(10,limit));return{orders:all.slice(safeOffset,safeOffset+safeLimit),hasMore:all.length>safeOffset+safeLimit,nextOffset:safeOffset+safeLimit};}
