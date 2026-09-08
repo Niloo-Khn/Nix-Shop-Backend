@@ -10,7 +10,7 @@ Provider-neutral TypeScript microservices for Nix-Shop. The frontend remains in 
 | Product | 4002 | Public catalog and protected product creation |
 | Payment | 4003 | Server-authoritative totals and hosted-checkout sessions |
 | Help center | 4004 | Help articles and support tickets |
-| Order | 4005 | Trusted order totals, line snapshots, and order state |
+| Order | 4005 | Persistent SQLite orders, trusted totals, line snapshots, and order state |
 | Promotion | 4006 | Promotion rules, eligibility, and discount calculation |
 | Return | 4007 | Order-linked return requests and item validation |
 
@@ -54,7 +54,7 @@ Or set strong values in `.env` and run:
 docker compose up --build
 ```
 
-The frontend runs at `http://localhost:4173`. Account records persist in `data/accounts.sqlite` by default; override this with `ACCOUNT_DATABASE_PATH`. It loads products from port 4002 and requests checkout sessions from port 4003. If the backend is unavailable, it displays a small fallback catalog.
+The frontend runs at `http://localhost:4173`. Account records persist in `data/accounts.sqlite` and orders in `data/orders.sqlite` by default; override these with `ACCOUNT_DATABASE_PATH` and `ORDER_DATABASE_PATH`. It loads products from port 4002 and requests checkout sessions from port 4003. If the backend is unavailable, it displays a small fallback catalog.
 
 ## Back office later
 
@@ -85,7 +85,7 @@ Integration tests use ephemeral loopback ports and close every service after the
 
 ## Production requirements
 
-- Replace all in-memory repositories with isolated persistent databases owned by each service.
+- Replace the remaining in-memory repositories with isolated persistent databases owned by each service. Accounts and orders already use separate SQLite databases.
 - Replace `DevelopmentPaymentProvider` with a hosted provider; never accept raw card data.
 - Use a secrets manager for `AUTH_SECRET`, admin credentials, and provider keys.
 - Put services behind TLS, a gateway, rate limiting, centralized logging, and monitoring.

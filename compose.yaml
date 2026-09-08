@@ -46,9 +46,11 @@ services:
       PROMOTION_SERVICE_URL: http://promotions:4006
       ACCOUNT_SERVICE_URL: http://accounts:4001
       SERVICE_API_KEY: ${SERVICE_API_KEY:?Set SERVICE_API_KEY in .env}
+      ORDER_DATABASE_PATH: /app/data/orders.sqlite
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4005:4005"]
     depends_on: [accounts, products, promotions]
+    volumes: ["order-data:/app/data"]
     read_only: true
   promotions:
     build: .
@@ -71,3 +73,4 @@ services:
 
 volumes:
   account-data:
+  order-data:
