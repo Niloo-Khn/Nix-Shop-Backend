@@ -1,2 +1,30 @@
-import test from "node:test";import assert from "node:assert/strict";import {createPaymentApp} from "../../src/services/payments.service.js";import {createProductApp} from "../../src/services/products.service.js";import {createOrderApp,type Order} from "../../src/services/orders.service.js";import {json,startAuthenticatedAccount,startService} from "./helpers.js";
-test("payment API uses an authenticated order through service authorization",async(context)=>{const account=await startAuthenticatedAccount();context.after(()=>account.service.close());const products=await startService(createProductApp());context.after(()=>products.close());process.env.ACCOUNT_SERVICE_URL=account.service.baseUrl;process.env.PRODUCT_SERVICE_URL=products.baseUrl;process.env.SERVICE_API_KEY="integration-service-key";const orders=await startService(createOrderApp());context.after(()=>orders.close());process.env.ORDER_SERVICE_URL=orders.baseUrl;const payments=await startService(createPaymentApp());context.after(()=>payments.close());const orderResponse=await fetch(`${orders.baseUrl}/orders`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:account.authorization},body:JSON.stringify({items:[{productId:"cloud-bed",quantity:2}]})});const order=await json<Order>(orderResponse);const response=await fetch(`${payments.baseUrl}/checkout-sessions`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({orderId:order.id,paymentMethod:"klarna"})});assert.equal(response.status,201);const checkout=await json<{amount:number;orderId:string;paymentMethod:string}>(response);assert.equal(checkout.amount,136);assert.equal(checkout.orderId,order.id);assert.equal(checkout.paymentMethod,"klarna");});
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtemp, rm } from "node:fs/promises";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { InMemoryRepository } from "../../src/shared/core.js";
+import { createPaymentApp, WebhookVerifier, type Payment } from "../../src/services/payments.service.js";
+import { createProductApp } from "../../src/services/products.service.js";
+import { createOrderApp, type Order } from "../../src/services/orders.service.js";
+import { SqlitePaymentRepository } from "../../src/repositories/sqlite-payment.repository.js";
+import { json, startAuthenticatedAccount, startService } from "./helpers.js";
+
+test("payment API authenticates, persists idempotently, and accepts only signed status updates",async context=>{
+  const directory=await mkdtemp(join(tmpdir(),"nix-shop-payments-"));context.after(()=>rm(directory,{recursive:true,force:true}));
+  const account=await startAuthenticatedAccount();context.after(()=>account.service.close());const products=await startService(createProductApp());context.after(()=>products.close());
+  process.env.ACCOUNT_SERVICE_URL=account.service.baseUrl;process.env.PRODUCT_SERVICE_URL=products.baseUrl;process.env.SERVICE_API_KEY="integration-service-key";process.env.PAYMENT_WEBHOOK_SECRET="integration-webhook-secret-at-least-32-characters";
+  const orders=await startService(createOrderApp(new InMemoryRepository<Order>()));context.after(()=>orders.close());process.env.ORDER_SERVICE_URL=orders.baseUrl;
+  const orderResponse=await fetch(`${orders.baseUrl}/orders`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:account.authorization},body:JSON.stringify({items:[{productId:"cloud-bed",quantity:2}]})});const order=await json<Order>(orderResponse);
+  const databasePath=join(directory,"payments.sqlite");const first=await startService(createPaymentApp(new SqlitePaymentRepository(databasePath)));
+  const headers={"Content-Type":"application/json",Authorization:account.authorization,"Idempotency-Key":"integration_checkout_1"};
+  const response=await fetch(`${first.baseUrl}/checkout-sessions`,{method:"POST",headers,body:JSON.stringify({orderId:order.id,paymentMethod:"klarna"})});assert.equal(response.status,201);const payment=await json<Payment>(response);assert.equal(payment.amount,136);
+  const retry=await fetch(`${first.baseUrl}/checkout-sessions`,{method:"POST",headers,body:JSON.stringify({orderId:order.id,paymentMethod:"klarna"})});assert.equal((await json<Payment>(retry)).id,payment.id);
+  const unauthenticated=await fetch(`${first.baseUrl}/checkout-sessions`,{method:"POST",headers:{"Content-Type":"application/json","Idempotency-Key":"another_key"},body:JSON.stringify({orderId:order.id,paymentMethod:"card"})});assert.equal(unauthenticated.status,401);
+  const event={providerReference:payment.providerReference,status:"paid" as const};const verifier=new WebhookVerifier(process.env.PAYMENT_WEBHOOK_SECRET);
+  const rejected=await fetch(`${first.baseUrl}/payment-webhooks/development`,{method:"POST",headers:{"Content-Type":"application/json","X-Webhook-Signature":"invalid"},body:JSON.stringify(event)});assert.equal(rejected.status,401);
+  const accepted=await fetch(`${first.baseUrl}/payment-webhooks/development`,{method:"POST",headers:{"Content-Type":"application/json","X-Webhook-Signature":verifier.sign(event)},body:JSON.stringify(event)});assert.equal(accepted.status,200);
+  await first.close();const second=await startService(createPaymentApp(new SqlitePaymentRepository(databasePath)));context.after(()=>second.close());
+  const saved=await fetch(`${second.baseUrl}/checkout-sessions/${payment.id}`,{headers:{Authorization:account.authorization}});assert.equal(saved.status,200);assert.equal((await json<Payment>(saved)).status,"paid");
+  const paidOrder=await fetch(`${orders.baseUrl}/orders/${order.id}`,{headers:{Authorization:account.authorization}});assert.equal((await json<Order>(paidOrder)).status,"paid");
+});

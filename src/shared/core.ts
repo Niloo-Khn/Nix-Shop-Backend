@@ -44,7 +44,7 @@ export class HttpApplication {
   }
   private securityHeaders(response: ServerResponse): void {
     response.setHeader("Access-Control-Allow-Origin", this.allowedOrigin); response.setHeader("Vary", "Origin");
-    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Admin-Key"); response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Admin-Key, Idempotency-Key, X-Webhook-Signature"); response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     response.setHeader("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'"); response.setHeader("X-Content-Type-Options", "nosniff"); response.setHeader("Referrer-Policy", "no-referrer"); response.setHeader("Cache-Control", "no-store");
   }
   private send(response: ServerResponse, status: number, body: Json): void { response.writeHead(status, { "Content-Type": "application/json; charset=utf-8" }); response.end(JSON.stringify(body)); }

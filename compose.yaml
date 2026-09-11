@@ -25,9 +25,12 @@ services:
       HOST: 0.0.0.0
       ORDER_SERVICE_URL: http://orders:4005
       SERVICE_API_KEY: ${SERVICE_API_KEY:?Set SERVICE_API_KEY in .env}
+      PAYMENT_DATABASE_PATH: /app/data/payments.sqlite
+      PAYMENT_WEBHOOK_SECRET: ${PAYMENT_WEBHOOK_SECRET:?Set PAYMENT_WEBHOOK_SECRET in .env}
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:4173}
     ports: ["4003:4003"]
     depends_on: [orders]
+    volumes: ["payment-data:/app/data"]
     read_only: true
   help:
     build: .
@@ -74,3 +77,4 @@ services:
 volumes:
   account-data:
   order-data:
+  payment-data:
